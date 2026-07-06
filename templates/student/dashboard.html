@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Dashboard &mdash; {{ school_name }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Welcome, {{ user.full_name.split(' ')[0] }}</h1>
+    <p class="subtitle">{{ user.program or "No program set" }} &middot; {{ user.year_level or "Year level not set" }}</p>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="num">{{ grade_count }}</div>
+    <div class="label">Grade Records</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">
+      {% if pending_enrollment %}
+        <span class="badge {{ pending_enrollment.status }}">{{ pending_enrollment.status }}</span>
+      {% else %}
+        &mdash;
+      {% endif %}
+    </div>
+    <div class="label">Latest Enrollment Status</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">{{ doc_count }}</div>
+    <div class="label">Documents Submitted</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Latest Announcements</h2>
+  {% if announcements %}
+    {% for a in announcements %}
+      <div style="padding: 10px 0; border-bottom: 1px solid var(--border);">
+        <strong>{{ a.title }}</strong>
+        <div style="color:var(--muted); font-size:0.8rem;">{{ a.created_at }}</div>
+        <p style="margin: 6px 0 0;">{{ a.content }}</p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="empty-state">No announcements yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

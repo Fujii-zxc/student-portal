@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Admin Dashboard</h1>
+    <p class="subtitle">Overview of the {{ school_name }} student portal</p>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="num">{{ stats.total_students }}</div>
+    <div class="label">Total Students</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">{{ stats.pending_verification }}</div>
+    <div class="label">Unverified Accounts</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">{{ stats.pending_enrollments }}</div>
+    <div class="label">Pending Enrollments</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">{{ stats.pending_documents }}</div>
+    <div class="label">Documents Awaiting Review</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Recently Registered Students</h2>
+  {% if recent_users %}
+  <table>
+    <thead><tr><th>Name</th><th>Email</th><th>Verified</th><th>Joined</th><th></th></tr></thead>
+    <tbody>
+      {% for u in recent_users %}
+      <tr>
+        <td>{{ u.full_name }}</td>
+        <td>{{ u.email }}</td>
+        <td>{% if u.is_verified %}<span class="badge verified">Yes</span>{% else %}<span class="badge pending">No</span>{% endif %}</td>
+        <td>{{ u.created_at }}</td>
+        <td><a href="{{ url_for('admin.user_detail', user_id=u.id) }}" class="btn small secondary">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No students registered yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

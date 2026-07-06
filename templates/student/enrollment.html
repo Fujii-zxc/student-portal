@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Enrollment{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Enrollment</h1></div>
+
+<div class="card">
+  <h2>Submit New Enrollment Request</h2>
+  <form method="POST" action="{{ url_for('student.enrollment') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div class="form-row">
+      <div>
+        <label for="school_year">School Year</label>
+        <input type="text" id="school_year" name="school_year" placeholder="e.g. 2026-2027" required>
+      </div>
+      <div>
+        <label for="semester">Semester</label>
+        <select id="semester" name="semester" required>
+          <option value="">-- Select --</option>
+          <option>1st Semester</option>
+          <option>2nd Semester</option>
+          <option>Summer</option>
+        </select>
+      </div>
+      <div>
+        <label for="year_level">Year Level</label>
+        <select id="year_level" name="year_level" required>
+          <option value="">-- Select --</option>
+          <option>1st Year</option>
+          <option>2nd Year</option>
+          <option>3rd Year</option>
+          <option>4th Year</option>
+          <option>5th Year</option>
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="btn accent">Submit Request</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Request History</h2>
+  {% if history %}
+  <table>
+    <thead><tr><th>School Year</th><th>Semester</th><th>Year Level</th><th>Status</th><th>Remarks</th><th>Date Requested</th></tr></thead>
+    <tbody>
+      {% for h in history %}
+      <tr>
+        <td>{{ h.school_year }}</td>
+        <td>{{ h.semester }}</td>
+        <td>{{ h.year_level }}</td>
+        <td><span class="badge {{ h.status }}">{{ h.status }}</span></td>
+        <td>{{ h.remarks or "-" }}</td>
+        <td>{{ h.date_requested }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No enrollment requests yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

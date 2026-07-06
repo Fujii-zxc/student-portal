@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ school_name }} Student Portal</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="hero">
+  <h1>{{ school_name }} Student Portal</h1>
+  <p>Check your grades, request enrollment, submit documents, and stay updated &mdash; all in one place, online.</p>
+  <a href="{{ url_for('auth.login') }}" class="btn accent">Log In</a>
+  <a href="{{ url_for('auth.register') }}" class="btn secondary" style="background:transparent;color:#fff;border-color:#fff;">Create Student Account</a>
+</div>
+
+<div class="features">
+  <div class="feature-card">
+    <h3>📄 Grades</h3>
+    <p>View your grades per semester anytime, no more waiting at the registrar's window.</p>
+  </div>
+  <div class="feature-card">
+    <h3>📝 Enrollment</h3>
+    <p>Submit enrollment requests online and track their approval status.</p>
+  </div>
+  <div class="feature-card">
+    <h3>📤 Documents</h3>
+    <p>Upload your School ID, grade copies, and requirements digitally.</p>
+  </div>
+  <div class="feature-card">
+    <h3>📢 Announcements</h3>
+    <p>Get official updates from the registrar in one central feed.</p>
+  </div>
+</div>
+
+<footer>{{ school_name }} Student Portal &mdash; Demo build</footer>
+</body>
+</html>

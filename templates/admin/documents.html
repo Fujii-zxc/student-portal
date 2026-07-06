@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Documents{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Document Review</h1></div>
+
+<div class="tabs">
+  <a href="{{ url_for('admin.documents', status='pending') }}" class="{{ 'active' if status=='pending' }}">Pending</a>
+  <a href="{{ url_for('admin.documents', status='verified') }}" class="{{ 'active' if status=='verified' }}">Verified</a>
+  <a href="{{ url_for('admin.documents', status='rejected') }}" class="{{ 'active' if status=='rejected' }}">Rejected</a>
+  <a href="{{ url_for('admin.documents', status='all') }}" class="{{ 'active' if status=='all' }}">All</a>
+</div>
+
+<div class="card">
+  {% if rows %}
+  <table>
+    <thead><tr><th>Student</th><th>Type</th><th>File</th><th>Status</th><th>Uploaded</th><th></th></tr></thead>
+    <tbody>
+      {% for d in rows %}
+      <tr>
+        <td>{{ d.full_name }} <span style="color:var(--muted);">({{ d.student_number or "-" }})</span></td>
+        <td>{{ d.doc_type }}</td>
+        <td><a href="{{ url_for('admin.download_document', doc_id=d.id) }}">{{ d.original_filename }}</a></td>
+        <td><span class="badge {{ d.status }}">{{ d.status }}</span></td>
+        <td>{{ d.uploaded_at }}</td>
+        <td>
+          {% if d.status == 'pending' %}
+          <form method="POST" action="{{ url_for('admin.review_document', doc_id=d.id) }}" style="display:flex; gap:6px;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" name="decision" value="verified" class="btn small accent">Verify</button>
+            <button type="submit" name="decision" value="rejected" class="btn small danger">Reject</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No documents in this category.</p>
+  {% endif %}
+</div>
+{% endblock %}

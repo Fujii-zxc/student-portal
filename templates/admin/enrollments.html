@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Enrollment Requests{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Enrollment Requests</h1></div>
+
+<div class="tabs">
+  <a href="{{ url_for('admin.enrollments', status='pending') }}" class="{{ 'active' if status=='pending' }}">Pending</a>
+  <a href="{{ url_for('admin.enrollments', status='approved') }}" class="{{ 'active' if status=='approved' }}">Approved</a>
+  <a href="{{ url_for('admin.enrollments', status='rejected') }}" class="{{ 'active' if status=='rejected' }}">Rejected</a>
+  <a href="{{ url_for('admin.enrollments', status='all') }}" class="{{ 'active' if status=='all' }}">All</a>
+</div>
+
+<div class="card">
+  {% if rows %}
+  <table>
+    <thead><tr><th>Student</th><th>SY</th><th>Semester</th><th>Year Level</th><th>Status</th><th>Requested</th><th></th></tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>{{ r.full_name }} <span style="color:var(--muted);">({{ r.student_number or "-" }})</span></td>
+        <td>{{ r.school_year }}</td>
+        <td>{{ r.semester }}</td>
+        <td>{{ r.year_level }}</td>
+        <td><span class="badge {{ r.status }}">{{ r.status }}</span></td>
+        <td>{{ r.date_requested }}</td>
+        <td>
+          {% if r.status == 'pending' %}
+          <form method="POST" action="{{ url_for('admin.process_enrollment', enr_id=r.id) }}" style="display:flex; gap:6px;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="text" name="remarks" placeholder="Remarks (optional)" style="width:140px;">
+            <button type="submit" name="decision" value="approved" class="btn small accent">Approve</button>
+            <button type="submit" name="decision" value="rejected" class="btn small danger">Reject</button>
+          </form>
+          {% else %}
+            {{ r.remarks or "-" }}
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No requests in this category.</p>
+  {% endif %}
+</div>
+{% endblock %}

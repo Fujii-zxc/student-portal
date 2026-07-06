@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}My Grades{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>My Grades</h1>
+</div>
+
+{% if grouped %}
+  {% for term, rows in grouped.items() %}
+    <div class="card">
+      <h3>{{ term }}</h3>
+      <table>
+        <thead>
+          <tr><th>Code</th><th>Subject</th><th>Units</th><th>Grade</th></tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+          <tr>
+            <td>{{ r.subject_code }}</td>
+            <td>{{ r.subject_name }}</td>
+            <td>{{ r.units }}</td>
+            <td><strong>{{ r.grade }}</strong></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="card"><p class="empty-state">No grades have been posted yet.</p></div>
+{% endif %}
+{% endblock %}

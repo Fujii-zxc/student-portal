@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="page-header"><h1>My Profile</h1></div>
+
+<div class="card">
+  <h2>Account Info</h2>
+  <p><strong>Name:</strong> {{ user.full_name }}</p>
+  <p><strong>Email:</strong> {{ user.email }}</p>
+  <p><strong>Student Number:</strong> {{ user.student_number or "-" }}</p>
+
+  <form method="POST" action="{{ url_for('student.profile') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="action" value="update_info">
+    <div class="form-row">
+      <div>
+        <label for="program">Program / Course</label>
+        <input type="text" id="program" name="program" value="{{ user.program or '' }}">
+      </div>
+      <div>
+        <label for="year_level">Year Level</label>
+        <select id="year_level" name="year_level">
+          <option value="" {{ 'selected' if not user.year_level }}>-- Select --</option>
+          {% for yl in ['1st Year','2nd Year','3rd Year','4th Year','5th Year'] %}
+          <option {{ 'selected' if user.year_level == yl }}>{{ yl }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="btn">Save Changes</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Change Password</h2>
+  <form method="POST" action="{{ url_for('student.profile') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="action" value="change_password">
+    <label for="current_password">Current Password</label>
+    <input type="password" id="current_password" name="current_password" required>
+    <div class="form-row">
+      <div>
+        <label for="new_password">New Password</label>
+        <input type="password" id="new_password" name="new_password" required minlength="8">
+      </div>
+      <div>
+        <label for="confirm_password">Confirm New Password</label>
+        <input type="password" id="confirm_password" name="confirm_password" required minlength="8">
+      </div>
+    </div>
+    <button type="submit" class="btn secondary">Change Password</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Announcements{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Announcements</h1></div>
+
+{% if items %}
+  {% for a in items %}
+  <div class="card">
+    <h3>{{ a.title }}</h3>
+    <div style="color:var(--muted); font-size:0.8rem; margin-bottom:8px;">{{ a.created_at }}</div>
+    <p style="margin:0;">{{ a.content }}</p>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="card"><p class="empty-state">No announcements yet.</p></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Register &mdash; {{ school_name }}{% endblock %}
+{% block content %}
+<div class="card narrow" style="margin: 40px auto; max-width: 560px;">
+  <h2>Create Student Account</h2>
+  <form method="POST" action="{{ url_for('auth.register') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <label for="full_name">Full Name</label>
+    <input type="text" id="full_name" name="full_name" value="{{ form.get('full_name','') }}" required>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" value="{{ form.get('email','') }}" required>
+
+    <div class="form-row">
+      <div>
+        <label for="student_number">Student Number</label>
+        <input type="text" id="student_number" name="student_number" value="{{ form.get('student_number','') }}">
+      </div>
+      <div>
+        <label for="year_level">Year Level</label>
+        <select id="year_level" name="year_level">
+          <option value="">-- Select --</option>
+          <option>1st Year</option>
+          <option>2nd Year</option>
+          <option>3rd Year</option>
+          <option>4th Year</option>
+          <option>5th Year</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="program">Program / Course</label>
+    <input type="text" id="program" name="program" placeholder="e.g. BS Computer Science" value="{{ form.get('program','') }}">
+
+    <div class="form-row">
+      <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required minlength="8">
+      </div>
+      <div>
+        <label for="confirm_password">Confirm Password</label>
+        <input type="password" id="confirm_password" name="confirm_password" required minlength="8">
+      </div>
+    </div>
+
+    <button type="submit" class="btn accent" style="width:100%;">Create Account</button>
+  </form>
+  <p style="margin-top:16px; font-size:0.88rem;">
+    Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a>
+  </p>
+</div>
+{% endblock %}

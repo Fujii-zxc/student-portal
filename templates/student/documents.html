@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Documents{% endblock %}
+{% block content %}
+<div class="page-header"><h1>My Documents</h1></div>
+
+<div class="card">
+  <h2>Upload a Document</h2>
+  <form method="POST" action="{{ url_for('student.documents') }}" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div class="form-row">
+      <div>
+        <label for="doc_type">Document Type</label>
+        <select id="doc_type" name="doc_type" required>
+          <option value="">-- Select --</option>
+          <option>School ID</option>
+          <option>Copy of Grades</option>
+          <option>Enrollment Form</option>
+          <option>Birth Certificate</option>
+          <option>Good Moral Certificate</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div>
+        <label for="file">File (PDF, PNG, or JPG, max 8MB)</label>
+        <input type="file" id="file" name="file" accept=".pdf,.png,.jpg,.jpeg" required>
+      </div>
+    </div>
+    <button type="submit" class="btn accent">Upload</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Submitted Documents</h2>
+  {% if docs %}
+  <table>
+    <thead><tr><th>Type</th><th>File</th><th>Status</th><th>Uploaded</th><th></th></tr></thead>
+    <tbody>
+      {% for d in docs %}
+      <tr>
+        <td>{{ d.doc_type }}</td>
+        <td>{{ d.original_filename }}</td>
+        <td><span class="badge {{ d.status }}">{{ d.status }}</span></td>
+        <td>{{ d.uploaded_at }}</td>
+        <td><a href="{{ url_for('student.download_document', doc_id=d.id) }}" class="btn small secondary">Download</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No documents submitted yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

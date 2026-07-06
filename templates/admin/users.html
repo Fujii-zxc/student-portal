@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Manage Students{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Students</h1></div>
+
+<div class="card">
+  <form method="GET" action="{{ url_for('admin.users') }}" style="display:flex; gap:10px;">
+    <input type="text" name="q" placeholder="Search by name, email, or student number" value="{{ q }}" style="flex:1;">
+    <button type="submit" class="btn secondary" style="margin-top:0;">Search</button>
+  </form>
+</div>
+
+<div class="card">
+  {% if users %}
+  <table>
+    <thead><tr><th>Name</th><th>Email</th><th>Student #</th><th>Program</th><th>Verified</th><th>Active</th><th></th></tr></thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.full_name }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.student_number or "-" }}</td>
+        <td>{{ u.program or "-" }}</td>
+        <td>{% if u.is_verified %}<span class="badge verified">Yes</span>{% else %}<span class="badge pending">No</span>{% endif %}</td>
+        <td>{% if u.is_active %}<span class="badge active">Active</span>{% else %}<span class="badge inactive">Inactive</span>{% endif %}</td>
+        <td><a href="{{ url_for('admin.user_detail', user_id=u.id) }}" class="btn small secondary">Manage</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No students found.</p>
+  {% endif %}
+</div>
+{% endblock %}

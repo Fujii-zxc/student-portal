@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Announcements{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Announcements</h1></div>
+
+<div class="card">
+  <h2>Post New Announcement</h2>
+  <form method="POST" action="{{ url_for('admin.announcements') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>Title</label>
+    <input type="text" name="title" required>
+    <label>Content</label>
+    <textarea name="content" required></textarea>
+    <button type="submit" class="btn accent">Post Announcement</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>All Announcements</h2>
+  {% if items %}
+  {% for a in items %}
+  <div style="padding:12px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-start;">
+    <div>
+      <strong>{{ a.title }}</strong>
+      <div style="color:var(--muted); font-size:0.8rem;">{{ a.created_at }}</div>
+      <p style="margin:6px 0 0;">{{ a.content }}</p>
+    </div>
+    <form method="POST" action="{{ url_for('admin.delete_announcement', ann_id=a.id) }}" onsubmit="return confirm('Delete this announcement?');">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button type="submit" class="btn small danger">Delete</button>
+    </form>
+  </div>
+  {% endfor %}
+  {% else %}
+  <p class="empty-state">No announcements posted yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

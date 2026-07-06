@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Verify your email{% endblock %}
+{% block content %}
+<div class="card narrow" style="margin: 40px auto;">
+  <h2>Almost there!</h2>
+  <p>We'd normally email a verification link to <strong>{{ email }}</strong>.</p>
+  <p>No email server is configured yet, so here's the link directly for this demo:</p>
+  <div class="demo-box">
+    <a href="{{ demo_link }}">{{ demo_link }}</a>
+  </div>
+  <a href="{{ demo_link }}" class="btn accent" style="width:100%; text-align:center;">Verify Now</a>
+  <p style="font-size:0.8rem; color:var(--muted); margin-top:14px;">
+    To send real emails, set the MAIL_SERVER / MAIL_USERNAME / MAIL_PASSWORD environment
+    variables in config.py before deploying.
+  </p>
+</div>
+{% endblock %}

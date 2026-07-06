@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}{{ student.full_name }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>{{ student.full_name }}</h1>
+    <p class="subtitle">{{ student.email }} &middot; {{ student.student_number or "No student #" }}</p>
+  </div>
+  <div>
+    {% if student.is_verified %}<span class="badge verified">Verified</span>{% else %}<span class="badge pending">Unverified</span>{% endif %}
+    {% if student.is_active %}<span class="badge active">Active</span>{% else %}<span class="badge inactive">Inactive</span>{% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <h2>Account Controls</h2>
+  <form method="POST" action="{{ url_for('admin.user_detail', user_id=student.id) }}" style="display:inline;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="action" value="toggle_verify">
+    <button type="submit" class="btn small secondary">{{ "Unverify" if student.is_verified else "Verify" }} Account</button>
+  </form>
+  <form method="POST" action="{{ url_for('admin.user_detail', user_id=student.id) }}" style="display:inline;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="action" value="toggle_active">
+    <button type="submit" class="btn small secondary">{{ "Deactivate" if student.is_active else "Activate" }} Account</button>
+  </form>
+  <form method="POST" action="{{ url_for('admin.user_detail', user_id=student.id) }}" style="display:inline;" onsubmit="return confirm('Delete this student account permanently?');">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="action" value="delete_user">
+    <button type="submit" class="btn small danger">Delete Account</button>
+  </form>
+
+  <h3 style="margin-top:22px;">Reset Password</h3>
+  <form method="POST" action="{{ url_for('admin.user_detail', user_id=student.id) }}" style="max-width:320px;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="action" value="reset_password">
+    <input type="password" name="new_password" placeholder="New password (min. 8 chars)" required minlength="8">
+    <button type="submit" class="btn small secondary" style="margin-top:10px;">Reset Password</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Add a Grade</h2>
+  <form method="POST" action="{{ url_for('admin.user_detail', user_id=student.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="action" value="add_grade">
+    <div class="form-row">
+      <div>
+        <label>School Year</label>
+        <input type="text" name="school_year" placeholder="2026-2027" required>
+      </div>
+      <div>
+        <label>Semester</label>
+        <select name="semester" required>
+          <option value="">-- Select --</option>
+          <option>1st Semester</option>
+          <option>2nd Semester</option>
+          <option>Summer</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div>
+        <label>Subject Code</label>
+        <input type="text" name="subject_code" placeholder="CS101" required>
+      </div>
+      <div>
+        <label>Subject Name</label>
+        <input type="text" name="subject_name" placeholder="Intro to Programming" required>
+      </div>
+      <div>
+        <label>Units</label>
+        <input type="number" name="units" value="3" step="0.5" required>
+      </div>
+      <div>
+        <label>Grade</label>
+        <input type="text" name="grade" placeholder="1.0 / A / 90" required>
+      </div>
+    </div>
+    <button type="submit" class="btn accent">Add Grade</button>
+  </form>
+
+  <h3 style="margin-top:22px;">Grade Records</h3>
+  {% if grades %}
+  <table>
+    <thead><tr><th>SY</th><th>Semester</th><th>Code</th><th>Subject</th><th>Units</th><th>Grade</th><th></th></tr></thead>
+    <tbody>
+      {% for g in grades %}
+      <tr>
+        <td>{{ g.school_year }}</td>
+        <td>{{ g.semester }}</td>
+        <td>{{ g.subject_code }}</td>
+        <td>{{ g.subject_name }}</td>
+        <td>{{ g.units }}</td>
+        <td>{{ g.grade }}</td>
+        <td>
+          <form method="POST" action="{{ url_for('admin.delete_grade', grade_id=g.id) }}" onsubmit="return confirm('Delete this grade record?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="btn small danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No grades recorded yet.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>Enrollment History</h2>
+  {% if enrollments %}
+  <table>
+    <thead><tr><th>SY</th><th>Semester</th><th>Year Level</th><th>Status</th><th>Requested</th></tr></thead>
+    <tbody>
+      {% for e in enrollments %}
+      <tr>
+        <td>{{ e.school_year }}</td><td>{{ e.semester }}</td><td>{{ e.year_level }}</td>
+        <td><span class="badge {{ e.status }}">{{ e.status }}</span></td>
+        <td>{{ e.date_requested }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No enrollment requests yet.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>Submitted Documents</h2>
+  {% if documents %}
+  <table>
+    <thead><tr><th>Type</th><th>File</th><th>Status</th><th>Uploaded</th><th></th></tr></thead>
+    <tbody>
+      {% for d in documents %}
+      <tr>
+        <td>{{ d.doc_type }}</td>
+        <td>{{ d.original_filename }}</td>
+        <td><span class="badge {{ d.status }}">{{ d.status }}</span></td>
+        <td>{{ d.uploaded_at }}</td>
+        <td><a href="{{ url_for('admin.download_document', doc_id=d.id) }}" class="btn small secondary">Download</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No documents submitted yet.</p>
+  {% endif %}
+</div>
+{% endblock %}
